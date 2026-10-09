@@ -1,5 +1,10 @@
 fetch('js/menu.html')
-    .then(response => response.text())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Impossible de charger le menu');
+        }
+        return response.text();
+    })
     .then(html => {
         document.getElementById('menu').innerHTML = html;
     })
