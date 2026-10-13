@@ -1,13 +1,475 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Météo Toulouse - Carto</title>
+  <meta charset="UTF-8" />
+  <title>Relevés météos en direct dans Toulouse Métropole</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; padding: 0; }
+
+    /* Contrôle couches */
+    .layer-control {
+      background: white;
+      padding: 8px 10px;
+      font-family: sans-serif;
+      font-size: 13px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      line-height: 1.8;
+    }
+    .layer-control label { cursor: pointer; display: block; }
+
+    /* Bouton Rafraîchir */
+    .refresh-control {
+      background: white;
+      padding: 0;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+    .refresh-control button {
+      display: block;
+      width: 100%;
+      padding: 6px 12px;
+      border: none;
+      background: #e60000;
+      color: white;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .refresh-control button:hover { background: #c00; }
+    .refresh-control button:disabled { background: #aaa; cursor: default; }
+    .refresh-countdown {
+      text-align: center;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: #666;
+      border-top: 1px solid #eee;
+    }
+
+    /* Spinner */
+    #loadingOverlay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2000;
+      background: rgba(255,255,255,0.85);
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      font-family: sans-serif;
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 3px solid #ccc;
+      border-top-color: #e60000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Label température */
+    .temp-label {
+      background: rgba(255,255,255,0.85);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* Légende */
+    .legend {
+      background: white;
+      padding: 10px 12px;
+      font-family: sans-serif;
+      font-size: 12px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      line-height: 1.7;
+      min-width: 220px;
+    }
+    .legend-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+    .legend-row { display: flex; align-items: center; gap: 7px; }
+    .legend-circle {
+      flex-shrink: 0;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .legend-green    { background: #33aa33; }
+    .legend-lavender { background: #e6e6fa; }
+    .legend-gray-light { background: #bbb; }
+    .legend-gray-dark  { background: #666; }
+
+    /* Popup amélioré */
+    .popup-title { font-weight: bold; font-size: 14px; margin-bottom:4px; }
+    .popup-meta  { font-size: 12px; color: #666; margin-bottom: 6px; }
+    .popup-divider { border:none; border-top:1px solid #eee; margin: 6px 0; }
+    .popup-row { display:flex; justify-content:space-between; gap:12px; font-size:13px; margin:3px 0; }
+    .popup-label { color:#555; }
+    .popup-value { font-weight:bold; }
+    .humidity-bar-bg {
+      height: 6px; background: #eee; border-radius: 3px; margin-top: 2px; flex:1;
+    }
+    .humidity-bar-fill {
+      height: 100%; border-radius: 3px; background: #4a90d9;
+    }
+    .popup-temp-minmax { display:flex; gap:10px; font-size:13px; margin:3px 0; }
+  </style>
 </head>
 <body>
-    <h1>Projet météo de Toulouse Métropole</h1>
-    <p>Application cartographique autonome.</p>
-    <p><a href="../../projets.html">Retour au portfolio Carto</a></p>
+<div id="map"></div>
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <span>Chargement des stations…</span>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  /* ──────────────── FONDS DE CARTE ──────────────── */
+  const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  });
+  const ignLayer = L.tileLayer(
+    'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0' +
+    '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&TILEMATRIXSET=PM' +
+    '&FORMAT=image/jpeg&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+    attribution: '© IGN', tileSize:256, minZoom:0, maxZoom:19, noWrap:true
+  });
+
+  const map = L.map('map', { center:[43.6045,1.444], zoom:13, layers:[osmLayer] });
+
+  /* ──────────────── CONTRÔLE COUCHES ──────────────── */
+  const LayerControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd() {
+      const div = L.DomUtil.create('div', 'layer-control');
+      div.innerHTML = `
+        <label><input type="radio" name="layer" value="osm" checked> OSM</label>
+        <label><input type="radio" name="layer" value="ign"> Ortho IGN</label>`;
+      L.DomEvent.disableClickPropagation(div);
+      div.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('change', () => {
+          if (!inp.checked) return;
+          map.eachLayer(l => { if (l._url) map.removeLayer(l); });
+          map.addLayer(inp.value === 'osm' ? osmLayer : ignLayer);
+        });
+      });
+      return div;
+    }
+  });
+  new LayerControl().addTo(map);
+
+  /* ──────────────── CONTRÔLE RAFRAÎCHIR + COUNTDOWN ──────────────── */
+  const AUTO_REFRESH_MIN = 10;
+  let countdownSec = AUTO_REFRESH_MIN * 60;
+  let countdownInterval = null;
+
+  const RefreshControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd() {
+      const div = L.DomUtil.create('div', 'refresh-control');
+      div.innerHTML = `
+        <button id="refreshBtn">⟳ Rafraîchir</button>
+        <div class="refresh-countdown" id="countdown">Prochain : ${AUTO_REFRESH_MIN}:00</div>`;
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    }
+  });
+  new RefreshControl().addTo(map);
+
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    countdownSec = AUTO_REFRESH_MIN * 60;
+    countdownInterval = setInterval(() => {
+      countdownSec--;
+      const m = String(Math.floor(countdownSec / 60)).padStart(2,'0');
+      const s = String(countdownSec % 60).padStart(2,'0');
+      const el = document.getElementById('countdown');
+      if (el) el.textContent = `Prochain : ${m}:${s}`;
+      if (countdownSec <= 0) {
+        weatherCache.clear();
+        addWeatherStations();
+      }
+    }, 1000);
+  }
+
+  /* ──────────────── CACHE ──────────────── */
+  const CACHE_DURATION = 15 * 60 * 1000;
+  const weatherCache = new Map();
+
+  async function fetchLatestDataCached(stationNom) {
+    const now = Date.now();
+    if (weatherCache.has(stationNom)) {
+      const cached = weatherCache.get(stationNom);
+      if (now - cached.timestamp < CACHE_DURATION) return cached;
+    }
+    try {
+      /* Détection automatique du champ date et tri adapté */
+      const testResp = await fetch(
+        `https://data.toulouse-metropole.fr/api/explore/v2.1/catalog/datasets/${stationNom}/records?limit=1`
+      );
+      const testJson = await testResp.json();
+      const firstRecord = testJson.results?.[0] || {};
+      const dateField = ('heure_utc' in firstRecord) ? 'heure_utc' : 'mm_dd_yy_hh_mm';
+
+      const resp = await fetch(
+        `https://data.toulouse-metropole.fr/api/explore/v2.1/catalog/datasets/${stationNom}/records?limit=100&order_by=${dateField}%20desc`
+      );
+      const json = await resp.json();
+      const dateNow = new Date();
+      const startOfDay = new Date(dateNow); startOfDay.setHours(0,0,0,0);
+
+      /* Normalisation : on injecte heure_utc pour que le reste du code soit identique */
+      const results = (json.results || []).map(r =>
+        dateField === 'mm_dd_yy_hh_mm' ? { ...r, heure_utc: r.mm_dd_yy_hh_mm } : r
+      );
+
+      const valid = results.filter(r => {
+        const d = new Date(r.heure_utc);
+        /* pression normale ~99500 Pa ; station alt ~101 hPa (valeur brute) */
+        const pOk = r.pression > 95000 || (r.pression > 0 && r.pression < 2000);
+        return r.temperature_en_degre_c > -40 && pOk && d >= startOfDay && d <= dateNow;
+      });
+      const latest = valid[0] || null;
+      let tempMin = null, tempMax = null;
+      for (const r of valid) {
+        if (!tempMin || r.temperature_en_degre_c < tempMin.temperature_en_degre_c) tempMin = r;
+        if (!tempMax || r.temperature_en_degre_c > tempMax.temperature_en_degre_c) tempMax = r;
+      }
+      const result = { data: latest, tempMin, tempMax, error: false, timestamp: now };
+      weatherCache.set(stationNom, result);
+      return result;
+    } catch {
+      const err = { data: null, tempMin: null, tempMax: null, error: true, timestamp: now };
+      weatherCache.set(stationNom, err);
+      return err;
+    }
+  }
+
+  /* ──────────────── COULEUR TEMPÉRATURE ──────────────── */
+  function tempColor(t) {
+    if (t === null || t === undefined) return '#bbb';
+    if (t <= 0)  return '#0033aa';
+    if (t <= 5)  return '#0066cc';
+    if (t <= 10) return '#00aacc';
+    if (t <= 15) return '#00ccaa';
+    if (t <= 20) return '#33aa33';
+    if (t <= 25) return '#aacc00';
+    if (t <= 30) return '#ffcc00';
+    if (t <= 35) return '#ff8800';
+    if (t <= 40) return '#e60000';
+    return '#ff00ff';
+  }
+
+  /* ──────────────── GROUPE DE MARKERS ──────────────── */
+  const stationGroup = L.layerGroup().addTo(map);
+
+  /* ──────────────── CHARGEMENT ──────────────── */
+  function showLoading(v) {
+    const el = document.getElementById('loadingOverlay');
+    el.style.display = v ? 'flex' : 'none';
+  }
+  function setRefreshBtnDisabled(v) {
+    const btn = document.getElementById('refreshBtn');
+    if (btn) btn.disabled = v;
+  }
+
+  /* ──────────────── AJOUT DES STATIONS ──────────────── */
+  async function addWeatherStations() {
+    showLoading(true);
+    setRefreshBtnDisabled(true);
+    startCountdown();
+
+    try {
+      const res = await fetch(
+        'https://data.toulouse-metropole.fr/api/explore/v2.1/catalog/datasets/stations-meteo-en-place/records?limit=100'
+      );
+      const data = await res.json();
+      stationGroup.clearLayers();
+
+      const stations = data.results.filter(r => r.type_stati === 'ISS' && r.geopoint);
+      const weatherResults = await Promise.all(stations.map(s => fetchLatestDataCached(s.id_nom.toLowerCase())));
+
+      const now = new Date();
+      const fmt = d => new Date(d).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12:false });
+
+      for (let i = 0; i < stations.length; i++) {
+        const record = stations[i];
+        const latlng = [record.geopoint.lat, record.geopoint.lon];
+        const weather = weatherResults[i];
+
+        let fillColor = '#e60000', strokeColor = '#fff', showLabel = true;
+
+        if (weather.error) {
+          fillColor = '#666'; strokeColor = '#444'; showLabel = false;
+        } else if (!weather.data) {
+          fillColor = '#bbb'; strokeColor = '#999'; showLabel = false;
+        } else {
+          const elapsed = now - new Date(weather.data.heure_utc);
+          if (elapsed > 3600000) { fillColor = '#e6e6fa'; strokeColor = '#999'; showLabel = false; }
+          else { fillColor = tempColor(weather.data.temperature_en_degre_c); }
+        }
+
+        const circleMarker = L.circleMarker(latlng, {
+          radius: 7, weight: 1.5, fillOpacity: 1, color: strokeColor, fillColor
+        });
+        circleMarker.stationProps = {
+          nom: record.id_nom, code: record.id_numero,
+          commune: record.ville, altitude: record.altitude
+        };
+        circleMarker.weatherData = weather;
+
+        /* Label température */
+        const tempVal = (weather.data && !weather.error && showLabel) ? weather.data.temperature_en_degre_c : null;
+        const tempHtml = tempVal !== null ? `${tempVal} °C` : '';
+        const labelColor = tempVal !== null ? tempColor(tempVal) : '#e60000';
+        const labelIcon = L.divIcon({
+          className: 'temp-label',
+          html: `<span style="color:${labelColor}">${tempHtml}</span>`,
+          iconSize: [44, 20],
+          iconAnchor: [-10, 10]
+        });
+        const labelMarker = L.marker(latlng, { icon: labelIcon, interactive: false });
+
+        circleMarker.tempLabelMarker = labelMarker;
+        circleMarker._hasTempLabel = !!tempHtml;
+
+        stationGroup.addLayer(circleMarker);
+        stationGroup.addLayer(labelMarker);
+
+        /* Visibilité label selon zoom */
+        const zoom = map.getZoom();
+        labelMarker.getElement && (labelMarker.getElement().style.display =
+          (zoom >= 13 && tempHtml) ? 'block' : 'none');
+
+        /* ── Popup ── */
+        circleMarker.on('click', () => {
+          const p = circleMarker.stationProps;
+          const w = circleMarker.weatherData;
+          const coord = circleMarker.getLatLng();
+
+          let body = '';
+          if (w.error) {
+            body = '<p style="color:#c00;font-size:13px;margin:4px 0">⚠ Erreur de chargement des données météo</p>';
+          } else if (!w.data) {
+            body = '<p style="color:#888;font-size:13px;margin:4px 0">Données indisponibles ce jour</p>';
+          } else {
+            const d = w.data;
+            const minT = w.tempMin, maxT = w.tempMax;
+            const humidity = d.humidite ?? '—';
+            const humBar = typeof d.humidite === 'number'
+              ? `<div style="display:flex;align-items:center;gap:6px;margin:2px 0">
+                   <span style="color:#555;min-width:70px">Humidité</span>
+                   <div class="humidity-bar-bg"><div class="humidity-bar-fill" style="width:${d.humidite}%"></div></div>
+                   <span style="font-weight:bold">${d.humidite} %</span>
+                 </div>` : '';
+
+            body = `
+              <hr class="popup-divider">
+              <div class="popup-row">
+                <span class="popup-label">🕐 Relevé</span>
+                <span class="popup-value">${fmt(d.heure_utc)}</span>
+              </div>
+							<hr class="popup-divider">
+              <div class="popup-row">
+                <span class="popup-label">🌡 Température</span>
+                <span class="popup-value" style="color:${tempColor(d.temperature_en_degre_c)}">${d.temperature_en_degre_c} °C</span>
+              </div>
+              <div class="popup-temp-minmax">
+								<span>▼ Min : <strong style="color:${tempColor(minT?.temperature_en_degre_c)}">${minT ? minT.temperature_en_degre_c + ' °C' : '—'}</strong>${minT ? ' <em style="color:#aaa;font-size:11px">(' + fmt(minT.heure_utc) + ')</em>' : ''}</span>
+								<span>▲ Max : <strong style="color:${tempColor(maxT?.temperature_en_degre_c)}">${maxT ? maxT.temperature_en_degre_c + ' °C' : '—'}</strong>${maxT ? ' <em style="color:#aaa;font-size:11px">(' + fmt(maxT.heure_utc) + ')</em>' : ''}</span>
+              </div>
+							<hr class="popup-divider">
+              ${humBar}
+              <div class="popup-row">
+                <span class="popup-label">🌧 Pluie</span>
+                <span class="popup-value">${d.pluie ?? '—'} mm</span>
+              </div>
+							<hr class="popup-divider">
+              <div class="popup-row">
+                <span class="popup-label">💨 Vent moy.</span>
+                <span class="popup-value">${d.force_moyenne_du_vecteur_vent ?? '—'} km/h</span>
+              </div>`;
+          }
+
+          L.popup({ maxWidth: 280 })
+            .setLatLng(coord)
+            .setContent(`
+              <div class="popup-title">${p.nom}</div>
+              <div class="popup-meta">Code : ${p.code} · ${p.commune} · Alt. ${p.altitude} m</div>
+              ${body}`)
+            .openOn(map);
+        });
+      }
+    } finally {
+      showLoading(false);
+      setRefreshBtnDisabled(false);
+    }
+  }
+
+  /* ──────────────── VISIBILITÉ LABELS AU ZOOM ──────────────── */
+  map.on('zoomend', () => {
+    const zoom = map.getZoom();
+    stationGroup.eachLayer(layer => {
+      if (layer.stationProps && layer.tempLabelMarker) {
+        const lm = layer.tempLabelMarker;
+        if (lm.getElement) {
+          lm.getElement().style.display =
+            (zoom >= 13 && layer._hasTempLabel) ? 'block' : 'none';
+        }
+      }
+    });
+  });
+
+  /* ──────────────── LÉGENDE ──────────────── */
+  const LegendControl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd() {
+      const div = L.DomUtil.create('div', 'legend');
+      div.innerHTML = `
+        <div class="legend-title">🌡 État des stations</div>
+        <div class="legend-row"><span class="legend-circle legend-green"></span> Données récentes (&lt;1h) <em>(couleur = température)</em></div>
+        <div class="legend-row"><span class="legend-circle legend-lavender"></span> Données &gt;1h aujourd'hui</div>
+        <div class="legend-row"><span class="legend-circle legend-gray-light"></span> Données indisponibles ce jour</div>
+        <div class="legend-row"><span class="legend-circle legend-gray-dark"></span> Erreur de chargement</div>
+        <hr style="border:none;border-top:1px solid #eee;margin:6px 0">
+        <div style="font-size:11px;color:#777">Température (couleur du marqueur)</div>
+        <div style="display:flex;gap:4px;margin-top:4px;align-items:center;font-size:11px">
+          <span style="color:#0066cc">≤0°</span>
+          <div style="flex:1;height:6px;background:linear-gradient(to right,#0033aa,#0066cc,#00aacc,#00ccaa,#33aa33,#aacc00,#ffcc00,#ff8800,#e60000,#ff00ff);border-radius:3px"></div>
+          <span style="color:#ff00ff">≥40°</span>
+        </div>`;
+      return div;
+    }
+  });
+  new LegendControl().addTo(map);
+
+  /* ──────────────── LANCEMENT ──────────────── */
+  document.addEventListener('click', e => {
+    if (e.target && e.target.id === 'refreshBtn') {
+      weatherCache.clear();
+      addWeatherStations();
+    }
+  });
+
+  addWeatherStations();
+</script>
 </body>
 </html>
