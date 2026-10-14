@@ -49,27 +49,34 @@
       color: #666;
       border-top: 1px solid #eee;
     }
-	  
-    /* Bouton Lien vers portfolio */
+		  
+	/* Bloc indépendant pour le retour au portfolio */
+	.portfolio-control {
+	  margin-top: 8px;
+	  background: white;
+	  padding: 0;
+	  border-radius: 6px;
+	  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	  font-family: sans-serif;
+	  font-size: 13px;
+	}
+	
+	/* Bouton Retour au portfolio */
 	.portfolio-btn {
 	  display: block;
-	  margin-top: 8px;
-	  padding: 8px 12px;
-	  background: #263746;
-	  color: #fff;
-	  border: none;
+	  padding: 7px 12px;
+	  background: #e60000;
+	  color: white;
 	  border-radius: 6px;
 	  text-decoration: none;
-	  font-size: 13px;
-	  font-weight: 500;
 	  text-align: center;
-	  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-	  transition: background 0.2s ease;
+	  font-weight: bold;
+	  font-size: 13px;
 	}
 	
 	.portfolio-btn:hover {
-	  background: #40596d;
-	  color: #fff;
+	  background: #c00;
+	  color: white;
 	}
 
     /* Spinner */
@@ -207,10 +214,12 @@
     options: { position: 'topleft' },
     onAdd() {
       const div = L.DomUtil.create('div', 'refresh-control');
-      div.innerHTML = `
-        <button id="refreshBtn">⟳ Rafraîchir</button>
-        <div class="refresh-countdown" id="countdown">Prochain : ${AUTO_REFRESH_MIN}:00</div>
-        <a href="../../projets.html" class="portfolio-btn">↩ Retour au portfolio</a>`;
+		div.innerHTML = `
+		  <button id="refreshBtn">⟳ Rafraîchir</button>
+		  <div class="refresh-countdown" id="countdown">Prochain : ${AUTO_REFRESH_MIN}:00</div>
+		  <div class="portfolio-control">
+		    <a href="../../projets.html" class="portfolio-btn">← Retour au portfolio</a>
+		  </div>`;
       L.DomEvent.disableClickPropagation(div);
       return div;
     }
