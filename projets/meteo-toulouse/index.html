@@ -184,7 +184,7 @@
 
   const map = L.map('map', { center:[43.6045,1.444], zoom:13, layers:[osmLayer], zoomControl: false });
 
-  /* ──────────────── CONTRÔLE COUCHES ──────────────── */
+  /* ──────────────── CONTRÔLE COUCHES ET ZOOM ──────────────── */
   const LayerControl = L.Control.extend({
     options: { position: 'topright' },
     onAdd() {
@@ -203,12 +203,15 @@
       return div;
     }
   });
-  new LayerControl().addTo(map);
 	
-  /* ──────────────── BOUTONS ZOOM ──────────────── */
 	L.control.zoom({
 	  position: 'topright'
 	}).addTo(map);
+
+  new LayerControl().addTo(map);
+	
+  /* ──────────────── BOUTONS ZOOM ──────────────── */
+
 
  /* ──────────────── BOUTON LIEN PORTFOLIO ──────────────── */
   const PortfolioControl = L.Control.extend({
