@@ -214,18 +214,15 @@
     options: { position: 'topleft' },
     onAdd() {
       const div = L.DomUtil.create('div', 'refresh-control');
-		div.innerHTML = `
-		  <button id="refreshBtn">⟳ Rafraîchir</button>
-		  <div class="refresh-countdown" id="countdown">Prochain : ${AUTO_REFRESH_MIN}:00</div>
-		  <div class="portfolio-control">
-		    <a href="../../projets.html" class="portfolio-btn">← Retour au portfolio</a>
-		  </div>`;
+      div.innerHTML = `
+        <button id="refreshBtn">⟳ Rafraîchir</button>
+        <div class="refresh-countdown" id="countdown">Prochain : ${AUTO_REFRESH_MIN}:00</div>`;
       L.DomEvent.disableClickPropagation(div);
       return div;
     }
   });
-new RefreshControl().addTo(map);	
-
+  new RefreshControl().addTo(map);
+	
   function startCountdown() {
     clearInterval(countdownInterval);
     countdownSec = AUTO_REFRESH_MIN * 60;
@@ -241,6 +238,19 @@ new RefreshControl().addTo(map);
       }
     }, 1000);
   }
+
+  /* ──────────────── BOUTON LIEN PORTFOLIO ──────────────── */
+  const PortfolioControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd() {
+      const div = L.DomUtil.create('div', 'portfolio-control');
+      div.innerHTML = `
+        <a href="../../projets.html" class="portfolio-btn">← Retour au portfolio</a>`;
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    }
+  });
+  new PortfolioControl().addTo(map);
 
   /* ──────────────── CACHE ──────────────── */
   const CACHE_DURATION = 15 * 60 * 1000;
