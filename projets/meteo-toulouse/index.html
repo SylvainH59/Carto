@@ -205,6 +205,19 @@
   });
   new LayerControl().addTo(map);
 
+ /* ──────────────── BOUTON LIEN PORTFOLIO ──────────────── */
+  const PortfolioControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd() {
+      const div = L.DomUtil.create('div', 'portfolio-control');
+      div.innerHTML = `
+        <a href="../../projets.html" class="portfolio-btn">← Retour au portfolio</a>`;
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    }
+  });
+  new PortfolioControl().addTo(map);
+
   /* ──────────────── CONTRÔLE RAFRAÎCHIR + COUNTDOWN ──────────────── */
   const AUTO_REFRESH_MIN = 10;
   let countdownSec = AUTO_REFRESH_MIN * 60;
@@ -238,19 +251,6 @@
       }
     }, 1000);
   }
-
-  /* ──────────────── BOUTON LIEN PORTFOLIO ──────────────── */
-  const PortfolioControl = L.Control.extend({
-    options: { position: 'topleft' },
-    onAdd() {
-      const div = L.DomUtil.create('div', 'portfolio-control');
-      div.innerHTML = `
-        <a href="../../projets.html" class="portfolio-btn">← Retour au portfolio</a>`;
-      L.DomEvent.disableClickPropagation(div);
-      return div;
-    }
-  });
-  new PortfolioControl().addTo(map);
 
   /* ──────────────── CACHE ──────────────── */
   const CACHE_DURATION = 15 * 60 * 1000;
