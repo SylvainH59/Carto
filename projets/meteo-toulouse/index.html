@@ -182,7 +182,7 @@
     attribution: '© IGN', tileSize:256, minZoom:0, maxZoom:19, noWrap:true
   });
 
-  const map = L.map('map', { center:[43.6045,1.444], zoom:13, layers:[osmLayer] });
+  const map = L.map('map', { center:[43.6045,1.444], zoom:13, layers:[osmLayer], zoomControl: false });
 
   /* ──────────────── CONTRÔLE COUCHES ──────────────── */
   const LayerControl = L.Control.extend({
