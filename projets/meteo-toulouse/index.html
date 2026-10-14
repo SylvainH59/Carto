@@ -195,12 +195,11 @@
       return div;
     }
   });
+  new LayerControl().addTo(map);
 
 	L.control.zoom({
 	  position: 'topright'
 	}).addTo(map);
-	
-  new LayerControl().addTo(map);
 
  /* ──────────────── BOUTON LIEN PORTFOLIO ──────────────── */
   const PortfolioControl = L.Control.extend({
