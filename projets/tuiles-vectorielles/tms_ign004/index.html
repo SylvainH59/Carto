@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Courbes de niveau TMS couleurs selon l'altitude</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script type="text/javascript" src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css">
+  <style type="text/css">
+	  body { margin: 0; padding: 0; }
+	  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  </style>
+</head>
+<body>
+    
+<div id="map"></div>
+  <script type="text/javascript">
+    const url_style = "geojson/isohypse_multicolore.json";
+    fetch(url_style).then(res => res.json()).then(style => {
+      // Patcher le schéma tms sur xyz pour le rendre compatible avec Maplibre GL JS / Mapbox GL JS 
+      //style.sources.plan_ign.scheme = 'xyz';
+      //style.sources.plan_ign.attribution = 'Données cartographiques : © IGN';
+      const map = new maplibregl.Map({
+        container: 'map', // id du conteneur
+        style: style, // url du style
+        center: [6.71934, 45.92411], // centre de la carte
+        zoom: 14, // zoom
+        attributionControl: false
+      });
+      map.addControl(new maplibregl.AttributionControl({compact: true}));
+    })
+  </script>
+</body>
+</html>
+
+<!-- Exemple provenant de Thomas Gratier : https://bl.ocks.org/ThomasG77/5a122812635a85af7f762858ecf052a3-->
