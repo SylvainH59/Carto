@@ -17,7 +17,8 @@
         "duration": 300,
         "delay": 0
     },
-      "layers": [
+      "layers": 
+			[
         {
           "id": "batiment_general",
           "type": "fill",
@@ -98,7 +99,7 @@
           "source-layer": "batiment",
           "minzoom": 14,
           "paint": {"line-color": "#e4dfda"}
-        },
+        }
       ],
       "id": "fel33dkrb"
     }
