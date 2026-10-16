@@ -5,34 +5,211 @@
   <title>Parcellaire Express TMS en style par défaut</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script type="text/javascript" src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css">
-  <style type="text/css">
-	  body { margin: 0; padding: 0; }
-	  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet"
+        href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #basemap-selector {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      padding: 6px 10px;
+      background: white;
+      border: 1px solid #aaa;
+      border-radius: 3px;
+      font-size: 14px;
+    }
   </style>
 </head>
+
 <body>
-    
+
+<select id="basemap-selector">
+  <option value="white">Fond blanc</option>
+  <option value="ortho">Orthophoto</option>
+  <option value="osm">OpenStreetMap</option>
+</select>
+
 <div id="map"></div>
-  <script type="text/javascript">
-    const url_style = "geojson/pci.json";
-    fetch(url_style).then(res => res.json()).then(style => {
-      // Patcher le schéma tms sur xyz pour le rendre compatible avec Maplibre GL JS / Mapbox GL JS 
-      //style.sources.plan_ign.scheme = 'xyz';
-      //style.sources.plan_ign.attribution = 'Données cartographiques : © IGN';
-      const map = new maplibregl.Map({
-        container: 'map', // id du conteneur
-        style: style, // url du style
-        center: [2.8260685, 50.5958040], // centre de la carte
-        zoom: 17, // zoom
-        attributionControl: false
+
+<script>
+
+const url_style = "geojson/pci.json";
+
+fetch(url_style)
+  .then(res => res.json())
+  .then(style => {
+
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: style,
+      center: [2.82392, 50.59328],
+      zoom: 16,
+      attributionControl: false
+    });
+
+    map.addControl(
+      new maplibregl.AttributionControl({compact: true})
+    );
+
+    map.on('load', function () {
+
+      /*
+       * ---------------------------------------------------
+       * SOURCES DES FONDS
+       * ---------------------------------------------------
+       */
+
+      // OpenStreetMap
+      map.addSource('osm', {
+        type: 'raster',
+        tiles: [
+          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        ],
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors'
       });
-      map.addControl(new maplibregl.AttributionControl({compact: true}));
-    })
-  </script>
+
+      // Orthophoto IGN
+      map.addSource('ortho', {
+        type: 'raster',
+        tiles: [
+          'https://data.geopf.fr/wmts?' +
+          'SERVICE=WMTS' +
+          '&REQUEST=GetTile' +
+          '&VERSION=1.0.0' +
+          '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS' +
+          '&STYLE=normal' +
+          '&FORMAT=image/jpeg' +
+          '&TILEMATRIXSET=PM' +
+          '&TILEMATRIX={z}' +
+          '&TILEROW={y}' +
+          '&TILECOL={x}'
+        ],
+        tileSize: 256,
+        attribution: '© IGN'
+      });
+
+
+      /*
+       * ---------------------------------------------------
+       * COUCHES DE FOND
+       * ---------------------------------------------------
+       */
+
+      // Fond blanc
+      map.addLayer({
+        id: 'fond-blanc',
+        type: 'background',
+        paint: {
+          'background-color': '#ffffff'
+        }
+      }, getFirstLayerId());
+
+
+      // OpenStreetMap
+      map.addLayer({
+        id: 'fond-osm',
+        type: 'raster',
+        source: 'osm'
+      }, getFirstLayerId());
+
+
+      // Orthophoto
+      map.addLayer({
+        id: 'fond-ortho',
+        type: 'raster',
+        source: 'ortho'
+      }, getFirstLayerId());
+
+
+      /*
+       * ---------------------------------------------------
+       * FOND PAR DEFAUT
+       * ---------------------------------------------------
+       */
+
+      setBasemap('white');
+
+
+      // Synchroniser le sélecteur avec le fond réellement affiché
+      document.getElementById('basemap-selector').value = 'white';
+
+      
+      /*
+       * ---------------------------------------------------
+       * SELECTEUR
+       * ---------------------------------------------------
+       */
+
+      document
+        .getElementById('basemap-selector')
+        .addEventListener('change', function () {
+          setBasemap(this.value);
+        });
+
+
+      function setBasemap(basemap) {
+
+        map.setLayoutProperty(
+          'fond-blanc',
+          'visibility',
+          basemap === 'white' ? 'visible' : 'none'
+        );
+
+        map.setLayoutProperty(
+          'fond-osm',
+          'visibility',
+          basemap === 'osm' ? 'visible' : 'none'
+        );
+
+        map.setLayoutProperty(
+          'fond-ortho',
+          'visibility',
+          basemap === 'ortho' ? 'visible' : 'none'
+        );
+      }
+
+
+      /*
+       * ---------------------------------------------------
+       * PREMIERE COUCHE DU STYLE BDTOPO
+       * ---------------------------------------------------
+       *
+       * Les fonds sont placés avant celle-ci.
+       * Toutes les couches BDTOPO restent donc au-dessus.
+       */
+
+      function getFirstLayerId() {
+
+        const layers = map.getStyle().layers;
+
+        if (layers && layers.length > 0) {
+          return layers[0].id;
+        }
+
+        return undefined;
+      }
+
+    });
+
+  });
+
+</script>
+
 </body>
 </html>
-
-<!-- Exemple provenant de Thomas Gratier : https://bl.ocks.org/ThomasG77/5a122812635a85af7f762858ecf052a3-->
-
