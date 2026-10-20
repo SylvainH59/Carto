@@ -227,7 +227,8 @@
               "Religieux"
             ],
             "paint": {
-              "line-color": "#6c2727"
+              "line-color": "#6c2727",
+              "line-opacity": 0.7
             }
           },
           {
@@ -242,7 +243,8 @@
               "Indifférencié"
             ],
             "paint": {
-              "fill-color": "#c03a78"
+              "fill-color": "#c03a78",
+              "line-opacity": 0.7
             }
           },
           {
