@@ -151,7 +151,7 @@
               "Industriel"
             ],
             "paint": {
-              "fill-color": "#c03a78"
+              "fill-color": "#808080"
             }
           },
           {
@@ -166,7 +166,7 @@
               "Industriel"
             ],
             "paint": {
-              "line-color": "#6c2727"
+              "line-color": "#000000"
             }
           },
           {
