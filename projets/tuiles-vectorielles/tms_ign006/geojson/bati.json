@@ -76,7 +76,8 @@
               "Annexe"
             ],
             "paint": {
-              "line-color": "#c421dd"
+              "line-color": "#c421dd",
+              "line-opacity": 0.4
             }
           },
           {
