@@ -716,7 +716,21 @@
 
               }
 
-
+              /*
+               * ------------------------------------------------
+               * Récupération de l'opacité
+               * ------------------------------------------------
+               */
+              
+              let opacity = 1;
+              
+              if (
+                layer.type === 'fill' &&
+                layer.paint &&
+                layer.paint['fill-opacity'] !== undefined
+              ) {
+                opacity = layer.paint['fill-opacity'];
+              }
 
               /*
                * ------------------------------------------------
@@ -870,7 +884,8 @@
                 symbol.style.backgroundColor =
                   color;
 
-
+                symbol.style.opacity =
+                  opacity;
 
                 /*
                  * Recherche de la couche
