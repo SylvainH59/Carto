@@ -512,21 +512,18 @@
            */
 
           document
-
             .getElementById('legend-header')
-
-            .addEventListener(
-              'click',
-              function () {
-
-                document
-
-                  .getElementById('legend')
-
-                  .classList.toggle('open');
-
-              }
-            );
+            .addEventListener('click', function () {
+          
+              const legend = document.getElementById('legend');
+          
+              legend.classList.toggle('open');
+          
+              this.textContent = legend.classList.contains('open')
+                ? 'Type de bâtiment'
+                : 'Légende';
+          
+            });
 
 
 
