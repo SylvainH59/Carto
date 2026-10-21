@@ -1,23 +1,30 @@
 {
   "version": 8,
-    "name": "ADMIN_EXPRESS",
-    "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
-  "metadata": {"maputnik:renderer": "ol"},
+  "name": "ADMIN_EXPRESS",
+  "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+  "metadata": {
+    "maputnik:renderer": "ol"
+  },
   "sources": {
-        "adminexpress": {
-          "type": "vector",
-          "tiles": [
-          "https://data.geopf.fr/tms/1.0.0/ADMIN_EXPRESS/{z}/{x}/{y}.pbf"
-          ]
-        }
-      },
-  "transition": {"duration": 300, "delay": 0},
+    "adminexpress": {
+      "type": "vector",
+      "tiles": [
+        "https://data.geopf.fr/tms/1.0.0/ADMIN_EXPRESS/{z}/{x}/{y}.pbf"
+      ],
+      "url": "https://data.geopf.fr/tms/1.0.0/ADMIN_EXPRESS/metadata.json"
+    }
+  },
+  "transition": {
+    "duration": 300,
+    "delay": 0
+  },
   "layers": [
     {
       "id": "chef_lieu",
       "type": "circle",
       "source": "adminexpress",
-      "source-layer": "chflieu_commune",
+      "source-layer": "chef_lieu_de_commune",
+      "minzoom": 14,
       "paint": {
         "circle-color": "#273d9d",
         "circle-stroke-color": "rgba(0, 0, 0, 1)",
@@ -31,13 +38,28 @@
       "source": "adminexpress",
       "source-layer": "commune",
       "minzoom": 12,
-      "paint": {"line-color": "#e49b67", "line-width": 2}
+      "paint": {
+        "line-color": "#e49b67",
+        "line-width": 2
+      }
     },
     {
       "id": "arrondissement_limites",
       "type": "line",
       "source": "adminexpress",
       "source-layer": "arrondissement",
+      "paint": {
+        "line-color": "#000000",
+        "line-width": 0.5
+      },
+      "minzoom": 12
+    },
+    {
+      "id": "arrondissement_municipal_limites",
+      "type": "line",
+      "source": "adminexpress",
+      "source-layer": "arrondissement_municipal",
+      "minzoom": 15,
       "paint": {
         "line-color": "#000000",
         "line-width": 0.5
@@ -48,10 +70,44 @@
       "type": "line",
       "source": "adminexpress",
       "source-layer": "canton",
+      "minzoom": 14,
       "paint": {
-        "line-color": {"stops": [[11, "#b81414"], [12, "#d65c5c"]]},
-        "line-width": {"stops": [[11, 2], [12, 6]]},
-        "line-opacity": {"stops": [[11, 1], [12, 0.4]]}
+        "line-color": {
+          "stops": [
+            [
+              11,
+              "#b81414"
+            ],
+            [
+              12,
+              "#d65c5c"
+            ]
+          ]
+        },
+        "line-width": {
+          "stops": [
+            [
+              11,
+              2
+            ],
+            [
+              12,
+              6
+            ]
+          ]
+        },
+        "line-opacity": {
+          "stops": [
+            [
+              11,
+              1
+            ],
+            [
+              12,
+              0.4
+            ]
+          ]
+        }
       }
     },
     {
@@ -59,10 +115,44 @@
       "type": "line",
       "source": "adminexpress",
       "source-layer": "epci",
+      "minzoom": 14,
       "paint": {
-        "line-color": {"stops": [[9, "#b814b8"], [14, "#c270c2"]]},
-        "line-width": {"stops": [[9, 1], [14, 10]]},
-        "line-opacity": {"stops": [[9, 1], [14, 0.4]]}
+        "line-color": {
+          "stops": [
+            [
+              9,
+              "#b814b8"
+            ],
+            [
+              14,
+              "#c270c2"
+            ]
+          ]
+        },
+        "line-width": {
+          "stops": [
+            [
+              9,
+              1
+            ],
+            [
+              14,
+              10
+            ]
+          ]
+        },
+        "line-opacity": {
+          "stops": [
+            [
+              9,
+              1
+            ],
+            [
+              14,
+              0.4
+            ]
+          ]
+        }
       }
     },
     {
@@ -73,7 +163,8 @@
       "paint": {
         "line-color": "#000000",
         "line-width": 1
-      }
+      },
+      "minzoom": 8
     },
     {
       "id": "region",
@@ -92,14 +183,26 @@
       "source-layer": "commune",
       "minzoom": 6,
       "maxzoom": 11,
-      "filter": ["all", ["==", "statut", "Capitale d'état"]],
+      "filter": [
+        "all",
+        [
+          "==",
+          "statut",
+          "Capitale d'état"
+        ]
+      ],
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "{nom_officiel}",
         "text-allow-overlap": false,
-        "text-offset": [0, -2],
+        "text-offset": [
+          0,
+          -2
+        ],
         "icon-text-fit": "none",
         "text-size": 13,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
       "paint": {
         "text-color": "#273d9d",
@@ -112,16 +215,28 @@
       "type": "symbol",
       "source": "adminexpress",
       "source-layer": "commune",
-      "minzoom": 6,
-      "maxzoom": 11,
-      "filter": ["all", ["==", "statut", "Préfecture"]],
+      "minzoom": 9,
+      "maxzoom": 13,
+      "filter": [
+        "all",
+        [
+          "==",
+          "statut",
+          "Préfecture"
+        ]
+      ],
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "{nom_officiel}",
         "text-allow-overlap": false,
-        "text-offset": [0, -2],
+        "text-offset": [
+          0,
+          -2
+        ],
         "icon-text-fit": "none",
         "text-size": 13,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
       "paint": {
         "text-color": "#273d9d",
@@ -133,15 +248,20 @@
       "id": "chef_lieu_label",
       "type": "symbol",
       "source": "adminexpress",
-      "source-layer": "chflieu_commune",
+      "source-layer": "chef_lieu_de_commune",
       "minzoom": 14,
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "Mairie de {nom_officiel}",
         "text-allow-overlap": false,
-        "text-offset": [0, -2],
+        "text-offset": [
+          0,
+          -2
+        ],
         "icon-text-fit": "none",
         "text-size": 12,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
       "paint": {
         "text-color": "#273d9d",
@@ -154,13 +274,18 @@
       "type": "symbol",
       "source": "adminexpress",
       "source-layer": "commune",
-      "minzoom": 13,
+      "minzoom": 12,
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "{nom_officiel}",
         "text-size": 12,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
-      "paint": {"text-halo-color": "#ffffff", "text-halo-width": 2}
+      "paint": {
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 2
+      }
     },
     {
       "id": "epci_labels",
@@ -169,14 +294,17 @@
       "source-layer": "epci",
       "layout": {
         "text-size": 13,
-        "text-font": ["Open Sans Bold Italic"],
-        "text-field": "{nom}"
+        "text-font": [
+          "Open Sans Bold Italic"
+        ],
+        "text-field": "{nom_officiel}"
       },
       "paint": {
         "text-color": "#b814b8",
         "text-halo-color": "#ffffff",
         "text-halo-width": 2
-      }
+      },
+      "minzoom": 14
     },
     {
       "id": "departement_label",
@@ -185,15 +313,18 @@
       "source-layer": "departement",
       "maxzoom": 11,
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "{nom_officiel}",
         "icon-size": 1,
         "text-size": 12,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
       "paint": {
         "text-halo-color": "rgba(255, 255, 255, 1)",
         "text-halo-width": 2
-      }
+      },
+      "minzoom": 8
     },
     {
       "id": "region_label",
@@ -202,11 +333,33 @@
       "source-layer": "region",
       "maxzoom": 12,
       "layout": {
-        "text-field": "{nom}",
+        "text-field": "{nom_officiel}",
         "text-size": 14,
-        "text-font": ["Source Sans Pro Bold"]
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
       },
-      "paint": {"text-halo-color": "rgba(255, 255, 255, 1)"}
+      "paint": {
+        "text-halo-color": "rgba(255, 255, 255, 1)"
+      }
+    },
+    {
+      "id": "arrondissement_municipal_label",
+      "type": "symbol",
+      "source": "adminexpress",
+      "source-layer": "arrondissement_municipal",
+      "minzoom": 13,
+      "layout": {
+        "text-field": "{nom_officiel}",
+        "text-size": 10,
+        "text-font": [
+          "Source Sans Pro Bold"
+        ]
+      },
+      "paint": {
+        "text-halo-color": "rgba(255, 255, 255, 1)"
+      }
     }
-  ]
+  ],
+  "id": "4h5ank3"
 }
