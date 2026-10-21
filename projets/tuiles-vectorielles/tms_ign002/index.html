@@ -34,8 +34,7 @@
         .then(res => res.json())
         .then(style => {
           // Patcher le schéma tms sur xyz pour le rendre compatible avec Maplibre GL JS / Mapbox GL JS
-          style.sources.plan_ign.scheme = 'xyz';
-          style.sources.plan_ign.attribution = 'Données cartographiques : © IGN';
+          style.sources.bdtopo.attribution = 'Données cartographiques : © IGN';
 
           const map = new maplibregl.Map({
             container: 'map', // id du conteneur
