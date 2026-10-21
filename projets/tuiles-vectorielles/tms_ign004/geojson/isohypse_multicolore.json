@@ -4,18 +4,21 @@
   "metadata": {
     "maputnik:renderer": "ol",
     "geoportail:tooltip": "ISOHYPSE/tooltip_ISOHYPSE"
-},
+  },
   "sources": {
     "isohypse": {
       "type": "vector",
       "tiles": [
         "https://data.geopf.fr/tms/1.0.0/ISOHYPSE/{z}/{x}/{y}.pbf"
-    ],
-      "url":"https://data.geopf.fr/tms/1.0.0/ISOHYPSE/metadata.json"
+      ],
+      "url": "https://data.geopf.fr/tms/1.0.0/ISOHYPSE/metadata.json"
     }
   },
   "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
-  "transition": {"duration": 300, "delay": 0},
+  "transition": {
+    "duration": 300,
+    "delay": 0
+  },
   "layers": [
     {
       "source": "isohypse",
@@ -50,7 +53,14 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 100],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            100
+          ],
           0
         ]
       ]
@@ -74,7 +84,9 @@
         [
           "in",
           "altitude",
-          50, 250, 750
+          50,
+          250,
+          750
         ]
       ]
     },
@@ -168,11 +180,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 300],
-        [">", ["get", "altitude"], 50]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          300
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          50
+        ]
       ],
       "source": "isohypse",
       "source-layer": "courbe",
@@ -235,11 +268,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 600],
-        [">", ["get", "altitude"], 300]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          600
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          300
+        ]
       ]
     },
     {
@@ -289,11 +343,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 1200],
-        [">", ["get", "altitude"], 600]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          1200
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          600
+        ]
       ]
     },
     {
@@ -343,11 +418,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 1800],
-        [">", ["get", "altitude"], 1200]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          1800
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          1200
+        ]
       ]
     },
     {
@@ -397,11 +493,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 2400],
-        [">", ["get", "altitude"], 1800]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          2400
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          1800
+        ]
       ]
     },
     {
@@ -421,8 +538,22 @@
       },
       "filter": [
         "all",
-        ["<=", ["get", "altitude"], 3000],
-        [">", ["get", "altitude"], 2400]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          3000
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          2400
+        ]
       ]
     },
     {
@@ -443,11 +574,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 3000],
-        [">", ["get", "altitude"], 2400]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          3000
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          2400
+        ]
       ]
     },
     {
@@ -497,11 +649,32 @@
         "all",
         [
           "==",
-          ["%", ["get", "altitude"], 10],
+          [
+            "%",
+            [
+              "get",
+              "altitude"
+            ],
+            10
+          ],
           0
         ],
-        ["<=", ["get", "altitude"], 5000],
-        [">", ["get", "altitude"], 3000]
+        [
+          "<=",
+          [
+            "get",
+            "altitude"
+          ],
+          5000
+        ],
+        [
+          ">",
+          [
+            "get",
+            "altitude"
+          ],
+          3000
+        ]
       ]
     },
     {
