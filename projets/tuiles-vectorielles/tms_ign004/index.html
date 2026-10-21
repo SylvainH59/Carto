@@ -1,215 +1,172 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Courbe de niveau TMS avec couleurs selon l'altitude</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
-  <link rel="stylesheet"
-        href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Courbe de niveau TMS avec couleurs selon l'altitude</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+    <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css">
 
-    #map {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-    }
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-    #basemap-selector {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 10;
-      padding: 6px 10px;
-      background: white;
-      border: 1px solid #aaa;
-      border-radius: 3px;
-      font-size: 14px;
-    }
-  </style>
-</head>
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
 
-<body>
+      #basemap-selector {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        padding: 6px 10px;
+        background: white;
+        border: 1px solid #aaa;
+        border-radius: 3px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
 
-<select id="basemap-selector">
-  <option value="white">Fond blanc</option>
-  <option value="ortho">Orthophoto</option>
-  <option value="osm">OpenStreetMap</option>
-</select>
+  <body>
+    <select id="basemap-selector">
+      <option value="white">Fond blanc</option>
+      <option value="ortho">Orthophoto</option>
+      <option value="osm">OpenStreetMap</option>
+    </select>
 
-<div id="map"></div>
+    <div id="map"></div>
 
-<script>
+    <script>
+      const url_style = "geojson/isohypse_multicolore.json";
 
-const url_style = "geojson/isohypse_multicolore.json";
+      fetch(url_style)
+        .then(res => res.json())
+        .then(style => {
+          const map = new maplibregl.Map({
+            container: 'map',
+            style: style,
+            center: [6.71934, 45.92411],
+            zoom: 14,
+            attributionControl: false
+          });
 
-fetch(url_style)
-  .then(res => res.json())
-  .then(style => {
+          map.addControl(
+            new maplibregl.AttributionControl({compact: true})
+          );
 
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: style,
-      center: [6.71934, 45.92411],
-      zoom: 14,
-      attributionControl: false
-    });
+          map.on('load', function () {
+            // Sources des fonds de plan
 
-    map.addControl(
-      new maplibregl.AttributionControl({compact: true})
-    );
+            // OpenStreetMap
+            map.addSource('osm', {
+              type: 'raster',
+              tiles: [
+                'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+              ],
+              tileSize: 256,
+              attribution: '© OpenStreetMap contributors'
+            });
 
-    map.on('load', function () {
+            // Orthophoto IGN
+            map.addSource('ortho', {
+              type: 'raster',
+              tiles: [
+                'https://data.geopf.fr/wmts?' +
+                  'SERVICE=WMTS' +
+                  '&REQUEST=GetTile' +
+                  '&VERSION=1.0.0' +
+                  '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS' +
+                  '&STYLE=normal' +
+                  '&FORMAT=image/jpeg' +
+                  '&TILEMATRIXSET=PM' +
+                  '&TILEMATRIX={z}' +
+                  '&TILEROW={y}' +
+                  '&TILECOL={x}'
+              ],
+              tileSize: 256,
+              attribution: '© IGN'
+            });
 
-      /*
-       * ---------------------------------------------------
-       * SOURCES DES FONDS
-       * ---------------------------------------------------
-       */
+            // Couches des fonds de plan
 
-      // OpenStreetMap
-      map.addSource('osm', {
-        type: 'raster',
-        tiles: [
-          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-        ],
-        tileSize: 256,
-        attribution: '© OpenStreetMap contributors'
-      });
+            // Fond blanc
+            map.addLayer({
+              id: 'fond-blanc',
+              type: 'background',
+              paint: {
+                'background-color': '#ffffff'
+              }
+            }, getFirstLayerId());
 
-      // Orthophoto IGN
-      map.addSource('ortho', {
-        type: 'raster',
-        tiles: [
-          'https://data.geopf.fr/wmts?' +
-          'SERVICE=WMTS' +
-          '&REQUEST=GetTile' +
-          '&VERSION=1.0.0' +
-          '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS' +
-          '&STYLE=normal' +
-          '&FORMAT=image/jpeg' +
-          '&TILEMATRIXSET=PM' +
-          '&TILEMATRIX={z}' +
-          '&TILEROW={y}' +
-          '&TILECOL={x}'
-        ],
-        tileSize: 256,
-        attribution: '© IGN'
-      });
+            // OpenStreetMap
+            map.addLayer({
+              id: 'fond-osm',
+              type: 'raster',
+              source: 'osm'
+            }, getFirstLayerId());
 
+            // Orthophoto
+            map.addLayer({
+              id: 'fond-ortho',
+              type: 'raster',
+              source: 'ortho'
+            }, getFirstLayerId());
 
-      /*
-       * ---------------------------------------------------
-       * COUCHES DE FOND
-       * ---------------------------------------------------
-       */
+            // Fond de plan par défaut
+            setBasemap('white');
 
-      // Fond blanc
-      map.addLayer({
-        id: 'fond-blanc',
-        type: 'background',
-        paint: {
-          'background-color': '#ffffff'
-        }
-      }, getFirstLayerId());
+            // Synchroniser le sélecteur avec le fond réellement affiché
+            document.getElementById('basemap-selector').value = 'white';
 
+            // Sélecteur
+            document
+              .getElementById('basemap-selector')
+              .addEventListener('change', function () {
+                setBasemap(this.value);
+              });
 
-      // OpenStreetMap
-      map.addLayer({
-        id: 'fond-osm',
-        type: 'raster',
-        source: 'osm'
-      }, getFirstLayerId());
+            function setBasemap(basemap) {
+              map.setLayoutProperty(
+                'fond-blanc',
+                'visibility',
+                basemap === 'white' ? 'visible' : 'none'
+              );
 
+              map.setLayoutProperty(
+                'fond-osm',
+                'visibility',
+                basemap === 'osm' ? 'visible' : 'none'
+              );
 
-      // Orthophoto
-      map.addLayer({
-        id: 'fond-ortho',
-        type: 'raster',
-        source: 'ortho'
-      }, getFirstLayerId());
+              map.setLayoutProperty(
+                'fond-ortho',
+                'visibility',
+                basemap === 'ortho' ? 'visible' : 'none'
+              );
+            }
 
+            // Surcouche BD TOPO
+            function getFirstLayerId() {
+              const layers = map.getStyle().layers;
 
-      /*
-       * ---------------------------------------------------
-       * FOND PAR DEFAUT
-       * ---------------------------------------------------
-       */
+              if (layers && layers.length > 0) {
+                return layers[0].id;
+              }
 
-      setBasemap('white');
-
-
-      // Synchroniser le sélecteur avec le fond réellement affiché
-      document.getElementById('basemap-selector').value = 'white';
-
-      
-      /*
-       * ---------------------------------------------------
-       * SELECTEUR
-       * ---------------------------------------------------
-       */
-
-      document
-        .getElementById('basemap-selector')
-        .addEventListener('change', function () {
-          setBasemap(this.value);
+              return undefined;
+            }
+          });
         });
+    </script>
+  </body>
 
-
-      function setBasemap(basemap) {
-
-        map.setLayoutProperty(
-          'fond-blanc',
-          'visibility',
-          basemap === 'white' ? 'visible' : 'none'
-        );
-
-        map.setLayoutProperty(
-          'fond-osm',
-          'visibility',
-          basemap === 'osm' ? 'visible' : 'none'
-        );
-
-        map.setLayoutProperty(
-          'fond-ortho',
-          'visibility',
-          basemap === 'ortho' ? 'visible' : 'none'
-        );
-      }
-
-
-      /*
-       * ---------------------------------------------------
-       * PREMIERE COUCHE DU STYLE BDTOPO
-       * ---------------------------------------------------
-       *
-       * Les fonds sont placés avant celle-ci.
-       * Toutes les couches BDTOPO restent donc au-dessus.
-       */
-
-      function getFirstLayerId() {
-
-        const layers = map.getStyle().layers;
-
-        if (layers && layers.length > 0) {
-          return layers[0].id;
-        }
-
-        return undefined;
-      }
-
-    });
-
-  });
-
-</script>
-
-</body>
 </html>
