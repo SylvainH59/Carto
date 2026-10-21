@@ -3,265 +3,267 @@
   "name": "BDTOPO",
   "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
   "sprite": "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/BDTOPO/sprite/sprite_bdtopo",
-  "metadata": {"maputnik:renderer": "ol"},
+  "metadata": {
+    "maputnik:renderer": "ol"
+  },
   "sources": {
-      "bdtopo": {
-        "type": "vector",
-        "tiles": [
+    "bdtopo": {
+      "type": "vector",
+      "tiles": [
         "https://data.geopf.fr/tms/1.0.0/BDTOPO/{z}/{x}/{y}.pbf"
-        ],
-        "url":"https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
-      }
+      ],
+      "url": "https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
+    }
   },
   "transition": {
-      "duration": 300,
-      "delay": 0
+    "duration": 300,
+    "delay": 0
   },
-    "layers": [
-          {
-            "id": "batiment_residentiel_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Résidentiel"
-            ],
-            "paint": {
-              "fill-color": "#ff6dee"
-            }
-          },
-          {
-            "id": "batiment_residentiel_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Résidentiel"
-            ],
-            "paint": {
-              "line-color": "#c421dd"
-            }
-          },
-          {
-            "id": "batiment_annexe_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Annexe"
-            ],
-            "paint": {
-              "fill-color": "#ff6dee",
-              "fill-opacity": 0.4
-            }
-          },
-          {
-            "id": "batiment_annexe_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Annexe"
-            ],
-            "paint": {
-              "line-color": "#c421dd",
-              "line-opacity": 0.4
-            }
-          },
-          {
-            "id": "batiment_agricole_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Agricole"
-            ],
-            "paint": {
-              "fill-color": "#12e759"
-            }
-          },
-          {
-            "id": "batiment_agricole_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Agricole"
-            ],
-            "paint": {
-              "line-color": "#028e17"
-            }
-          },
-          {
-            "id": "batiment_commercial_et_services_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Commercial et services"
-            ],
-            "paint": {
-              "fill-color": "#bcbcbc"
-            }
-          },
-          {
-            "id": "batiment_commercial_et_services_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Commercial et services"
-            ],
-            "paint": {
-              "line-color": "#000000"
-            }
-          },
-          {
-            "id": "batiment_industriel_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Industriel"
-            ],
-            "paint": {
-              "fill-color": "#808080"
-            }
-          },
-          {
-            "id": "batiment_industriel_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Industriel"
-            ],
-            "paint": {
-              "line-color": "#000000"
-            }
-          },
-          {
-            "id": "batiment_sportif_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Sportif"
-            ],
-            "paint": {
-              "fill-color": "#f3e544"
-            }
-          },
-          {
-            "id": "batiment_sportif_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Sportif"
-            ],
-            "paint": {
-              "line-color": "#b59402"
-            }
-          },
-          {
-            "id": "batiment_religieux_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Religieux"
-            ],
-            "paint": {
-              "fill-color": "#d2691e"
-            }
-          },
-          {
-            "id": "batiment_religieux_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Religieux"
-            ],
-            "paint": {
-              "line-color": "#6c2727",
-              "line-opacity": 0.7
-            }
-          },
-          {
-            "id": "batiment_indifferencie_surf",
-            "type": "fill",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Indifférencié"
-            ],
-            "paint": {
-              "fill-color": "#c03a78",
-              "fill-opacity": 0.7
-            }
-          },
-          {
-            "id": "batiment_indifferencie_limites",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "batiment",
-            "minzoom": 14,
-            "filter": [
-              "==",
-              "usage_1",
-              "Indifférencié"
-            ],
-            "paint": {
-              "line-color": "#6c2727",
-              "line-opacity": 0.7
-            }
-          }
-    ]
+  "layers": [
+    {
+      "id": "batiment_residentiel_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Résidentiel"
+      ],
+      "paint": {
+        "fill-color": "#ff6dee"
+      }
+    },
+    {
+      "id": "batiment_residentiel_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Résidentiel"
+      ],
+      "paint": {
+        "line-color": "#c421dd"
+      }
+    },
+    {
+      "id": "batiment_annexe_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Annexe"
+      ],
+      "paint": {
+        "fill-color": "#ff6dee",
+        "fill-opacity": 0.4
+      }
+    },
+    {
+      "id": "batiment_annexe_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Annexe"
+      ],
+      "paint": {
+        "line-color": "#c421dd",
+        "line-opacity": 0.4
+      }
+    },
+    {
+      "id": "batiment_agricole_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Agricole"
+      ],
+      "paint": {
+        "fill-color": "#12e759"
+      }
+    },
+    {
+      "id": "batiment_agricole_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Agricole"
+      ],
+      "paint": {
+        "line-color": "#028e17"
+      }
+    },
+    {
+      "id": "batiment_commercial_et_services_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Commercial et services"
+      ],
+      "paint": {
+        "fill-color": "#bcbcbc"
+      }
+    },
+    {
+      "id": "batiment_commercial_et_services_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Commercial et services"
+      ],
+      "paint": {
+        "line-color": "#000000"
+      }
+    },
+    {
+      "id": "batiment_industriel_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Industriel"
+      ],
+      "paint": {
+        "fill-color": "#808080"
+      }
+    },
+    {
+      "id": "batiment_industriel_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Industriel"
+      ],
+      "paint": {
+        "line-color": "#000000"
+      }
+    },
+    {
+      "id": "batiment_sportif_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Sportif"
+      ],
+      "paint": {
+        "fill-color": "#f3e544"
+      }
+    },
+    {
+      "id": "batiment_sportif_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Sportif"
+      ],
+      "paint": {
+        "line-color": "#b59402"
+      }
+    },
+    {
+      "id": "batiment_religieux_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Religieux"
+      ],
+      "paint": {
+        "fill-color": "#d2691e"
+      }
+    },
+    {
+      "id": "batiment_religieux_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Religieux"
+      ],
+      "paint": {
+        "line-color": "#6c2727",
+        "line-opacity": 0.7
+      }
+    },
+    {
+      "id": "batiment_indifferencie_surf",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Indifférencié"
+      ],
+      "paint": {
+        "fill-color": "#c03a78",
+        "fill-opacity": 0.7
+      }
+    },
+    {
+      "id": "batiment_indifferencie_limites",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "filter": [
+        "==",
+        "usage_1",
+        "Indifférencié"
+      ],
+      "paint": {
+        "line-color": "#6c2727",
+        "line-opacity": 0.7
+      }
+    }
+  ]
 }
