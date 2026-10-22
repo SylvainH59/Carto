@@ -417,16 +417,6 @@
                 
                 /* Récupération du libellé depuis l'identifiant de la couche */
                 let label = labels[layer.id];
-                
-                /* Si aucun libellé personnalisé n'existe, on utilise le nom de la couche */
-                if (!label) {
-                  label = layer.id
-                    .replace(/_surf$/, '')
-                    .replace(/_limites$/, '')
-                    .replace(/_/g, ' ');
-                
-                  label = label.charAt(0).toUpperCase() + label.slice(1);
-                }
 
                 /* Clé permettant d'éviter les doublons */
                 const key =
