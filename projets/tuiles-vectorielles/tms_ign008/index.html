@@ -345,10 +345,9 @@
                   return;
                 }
 
-                /* On ne traite que les couches surfaciques et linéaires */
+                /* On ne traite que les couches surfaciques*/
                 if (
-                  layer.type !== 'fill' &&
-                  layer.type !== 'line'
+                  layer.type !== 'fill'
                 ) {
                   return;
                 }
