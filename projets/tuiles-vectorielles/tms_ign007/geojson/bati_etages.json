@@ -1,105 +1,176 @@
 {
-    "version": 8,
-    "name": "BDTOPO",
-    "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
-    "sprite": "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/BDTOPO/sprite/sprite_bdtopo",
-    "metadata": {"maputnik:renderer": "ol"},
-    "sources": {
-        "bdtopo": {
-          "type": "vector",
-          "tiles": [
-          "https://data.geopf.fr/tms/1.0.0/BDTOPO/{z}/{x}/{y}.pbf"
-          ],
-          "url":"https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
-        }
-    },
-    "transition": {
-        "duration": 300,
-        "delay": 0
-    },
-      "layers": 
-			[
-        {
-          "id": "batiment_general",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all"],
-          "paint": {"fill-color": "rgba(223, 223, 223, 1)"}
-        },
-        {
-          "id": "batiment_0_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all", ["==","nombre_d_etages", 0]],
-          "paint": {"fill-color": "#8AC8E2"}
-        },
-        {
-          "id": "batiment_1_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all", ["==","nombre_d_etages", 1]],
-          "paint": {"fill-color": "#92dd96"}
-        },
-        {
-          "id": "batiment_2_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all", ["==","nombre_d_etages", 2]],
-          "paint": {"fill-color": "#9ed256"}
-        },
-        {
-          "id": "batiment_3_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all", ["==","nombre_d_etages", 3]],
-          "paint": {"fill-color": "#b8d600"}
-        },
-        {
-          "id": "batiment_4_a_7_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": [
-            "all",
-            [">=", "nombre_d_etages", 4],
-            ["<=", "nombre_d_etages", 7]
-          ],
-          "paint": {"fill-color": "#FFD557"}
-        },
-        {
-          "id": "batiment_8_a_19_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all",
-            [">=", "nombre_d_etages", 8],
-            ["<=", "nombre_d_etages", 19]
-          ],
-          "paint": {"fill-color": "#DA8157"}
-        },
-        {
-          "id": "batiment_plus_de_20_etages",
-          "type": "fill",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "filter": ["all",
-            [">=", "nombre_d_etages", 20]
-          ],
-          "paint": {"fill-color": "#E73654"}
-        },
-        {
-          "id": "batiment_surf",
-          "type": "line",
-          "source": "bdtopo",
-          "source-layer": "batiment",
-          "minzoom": 14,
-          "paint": {"line-color": "#e4dfda"}
-        }
+  "version": 8,
+  "name": "BDTOPO",
+  "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/BDTOPO/sprite/sprite_bdtopo",
+  "metadata": {
+    "maputnik:renderer": "ol"
+  },
+  "sources": {
+    "bdtopo": {
+      "type": "vector",
+      "tiles": [
+        "https://data.geopf.fr/tms/1.0.0/BDTOPO/{z}/{x}/{y}.pbf"
       ],
-      "id": "fel33dkrb"
+      "url": "https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
     }
+  },
+  "transition": {
+    "duration": 300,
+    "delay": 0
+  },
+  "layers": [
+    {
+      "id": "batiment_general",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all"
+      ],
+      "paint": {
+        "fill-color": "rgba(223, 223, 223, 1)"
+      }
+    },
+    {
+      "id": "batiment_0_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          "==",
+          "nombre_d_etages",
+          0
+        ]
+      ],
+      "paint": {
+        "fill-color": "#8AC8E2"
+      }
+    },
+    {
+      "id": "batiment_1_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          "==",
+          "nombre_d_etages",
+          1
+        ]
+      ],
+      "paint": {
+        "fill-color": "#92dd96"
+      }
+    },
+    {
+      "id": "batiment_2_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          "==",
+          "nombre_d_etages",
+          2
+        ]
+      ],
+      "paint": {
+        "fill-color": "#9ed256"
+      }
+    },
+    {
+      "id": "batiment_3_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          "==",
+          "nombre_d_etages",
+          3
+        ]
+      ],
+      "paint": {
+        "fill-color": "#b8d600"
+      }
+    },
+    {
+      "id": "batiment_4_a_7_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          ">=",
+          "nombre_d_etages",
+          4
+        ],
+        [
+          "<=",
+          "nombre_d_etages",
+          7
+        ]
+      ],
+      "paint": {
+        "fill-color": "#FFD557"
+      }
+    },
+    {
+      "id": "batiment_8_a_19_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          ">=",
+          "nombre_d_etages",
+          8
+        ],
+        [
+          "<=",
+          "nombre_d_etages",
+          19
+        ]
+      ],
+      "paint": {
+        "fill-color": "#DA8157"
+      }
+    },
+    {
+      "id": "batiment_plus_de_20_etages",
+      "type": "fill",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "filter": [
+        "all",
+        [
+          ">=",
+          "nombre_d_etages",
+          20
+        ]
+      ],
+      "paint": {
+        "fill-color": "#E73654"
+      }
+    },
+    {
+      "id": "batiment_surf",
+      "type": "line",
+      "source": "bdtopo",
+      "source-layer": "batiment",
+      "minzoom": 14,
+      "paint": {
+        "line-color": "#e4dfda"
+      }
+    }
+  ],
+  "id": "fel33dkrb"
+}
