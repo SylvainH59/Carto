@@ -345,10 +345,9 @@
                   return;
                 }
 
-                /* On ne traite que les couches surfaciques et linéaires */
+                /* On ne traite que les couches surfaciques*/
                 if (
-                  layer.type !== 'fill' &&
-                  layer.type !== 'line'
+                  layer.type !== 'fill'
                 ) {
                   return;
                 }
@@ -411,16 +410,6 @@
                 /* Récupération du libellé depuis l'identifiant de la couche */
                 let label = labels[layer.id];
                 
-                /* Si aucun libellé personnalisé n'existe, on utilise le nom de la couche */
-                if (!label) {
-                  label = layer.id
-                    .replace(/_surf$/, '')
-                    .replace(/_limites$/, '')
-                    .replace(/_/g, ' ');
-                
-                  label = label.charAt(0).toUpperCase() + label.slice(1);
-                }
-
                 /* Clé permettant d'éviter les doublons */
                 const key =
                   (layer['source-layer'] || '') +
