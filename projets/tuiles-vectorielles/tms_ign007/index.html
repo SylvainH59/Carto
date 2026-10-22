@@ -270,7 +270,7 @@
 
                 this.textContent =
                   legend.classList.contains('open')
-                    ? 'Type de bâtiment'
+                    ? 'Nombre d\'étages par bâtiment'
                     : 'Légende';
               });
 
@@ -417,7 +417,8 @@
                   }
                 }
 
-                /* Si aucun filtre n'est présent, on utilise le nom de la couche */
+                /* Si aucun filtre n'est présent,
+                   on utilise le nom de la couche */
                 if (!label) {
 
                   label = layer.id
