@@ -395,50 +395,30 @@
                     layer.paint['fill-opacity'];
                 }
 
-                /* Récupération du libellé depuis le filtre */
-                let label = null;
-
-                if (layer.filter) {
-
-                  /* Exemple :
-                   * [
-                   *   "==",
-                   *   "usage_1",
-                   *   "Résidentiel"
-                   * ]
-                   */
-
-                  if (
-                    layer.filter[0] === '==' &&
-                    layer.filter.length >= 3
-                  ) {
-                    label =
-                      layer.filter[2];
-                  }
-                }
-
-                /* Si aucun filtre n'est présent,
-                   on utilise le nom de la couche */
+                /* Correspondance entre les identifiants des couches et les libellés */
+                const labels = {
+                  "batiment_general": "Inconnu",
+                  "batiment_0_etages": "0 étage",
+                  "batiment_1_etages": "1 étage",
+                  "batiment_2_etages": "2 étages",
+                  "batiment_3_etages": "3 étages",
+                  "batiment_4_a_7_etages": "4 à 7 étages",
+                  "batiment_8_a_19_etages": "8 à 19 étages",
+                  "batiment_plus_de_20_etages": "20 étages et plus",
+                  "batiment_surf": "Limites des bâtiments"
+                };
+                
+                /* Récupération du libellé depuis l'identifiant de la couche */
+                let label = labels[layer.id];
+                
+                /* Si aucun libellé personnalisé n'existe, on utilise le nom de la couche */
                 if (!label) {
-
                   label = layer.id
-                    .replace(
-                      /_surf$/,
-                      ''
-                    )
-                    .replace(
-                      /_limites$/,
-                      ''
-                    )
-                    .replace(
-                      /_/g,
-                      ' '
-                    );
-
-                  /* Première lettre en majuscule */
-                  label =
-                    label.charAt(0).toUpperCase() +
-                    label.slice(1);
+                    .replace(/_surf$/, '')
+                    .replace(/_limites$/, '')
+                    .replace(/_/g, ' ');
+                
+                  label = label.charAt(0).toUpperCase() + label.slice(1);
                 }
 
                 /* Clé permettant d'éviter les doublons */
