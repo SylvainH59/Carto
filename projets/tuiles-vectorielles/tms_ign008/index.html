@@ -147,7 +147,7 @@
 
       <!-- Contenu -->
       <div id="legend-content">
-        <!-- Le contenu sera créé automatiquement à partir de bati_etages.json -->
+        <!-- Le contenu sera créé automatiquement à partir de bati_date.json -->
         <div id="legend-items"></div>
       </div>
 
@@ -239,6 +239,9 @@
             map.addLayer({
               id: 'fond-ortho',
               type: 'raster',
+              paint: {
+                'raster-opacity': 0.5
+              },
               source: 'ortho'
             }, getFirstLayerId());
 
