@@ -228,7 +228,10 @@
             /* OpenStreetMap */
             map.addLayer({
               id: 'fond-osm',
-              type: 'raster',
+              type: 'raster',  
+              paint: {
+                'raster-opacity': 0.7
+              },
               source: 'osm'
             }, getFirstLayerId());
 
@@ -236,6 +239,9 @@
             map.addLayer({
               id: 'fond-ortho',
               type: 'raster',
+              paint: {
+                'raster-opacity': 0.5
+              },
               source: 'ortho'
             }, getFirstLayerId());
 
