@@ -190,7 +190,6 @@
                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
               ],
               tileSize: 256,
-              opacity: 0.7,
               attribution: '© OpenStreetMap contributors'
             });
 
@@ -229,7 +228,10 @@
             /* OpenStreetMap */
             map.addLayer({
               id: 'fond-osm',
-              type: 'raster',
+              type: 'raster',  
+              paint: {
+                'raster-opacity': 0.7
+              },
               source: 'osm'
             }, getFirstLayerId());
 
@@ -237,6 +239,9 @@
             map.addLayer({
               id: 'fond-ortho',
               type: 'raster',
+              paint: {
+                'raster-opacity': 0.7
+              },
               source: 'ortho'
             }, getFirstLayerId());
 
