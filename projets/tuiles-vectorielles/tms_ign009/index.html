@@ -112,8 +112,10 @@
       /* Symboles linéaires de la légende */
       .legend-line {
         width: 20px;
-        height: 3px;
+        height: 0;
         margin-right: 8px;
+        border-top: 2px solid #646464;
+        box-sizing: border-box;
         flex-shrink: 0;
       }
 
@@ -465,8 +467,35 @@
                   symbol.className =
                     'legend-line';
 
-                  symbol.style.backgroundColor =
+                  /* Couleur du trait */
+                  symbol.style.borderTopColor =
                     color;
+
+                  /* Épaisseur du trait */
+                  const lineWidth =
+                    layer.paint &&
+                    layer.paint['line-width'] !== undefined
+                      ? layer.paint['line-width']
+                      : 2;
+
+                  symbol.style.borderTopWidth =
+                    lineWidth + 'px';
+
+                  /* Style du trait */
+                  const dashArray =
+                    layer.paint &&
+                    layer.paint['line-dasharray'];
+
+                  if (dashArray) {
+
+                    symbol.style.borderTopStyle =
+                      'dashed';
+
+                  } else {
+
+                    symbol.style.borderTopStyle =
+                      'solid';
+                  }
                 }
 
                 /* Texte */
