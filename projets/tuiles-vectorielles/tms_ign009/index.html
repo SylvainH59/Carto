@@ -111,11 +111,10 @@
 
       /* Symboles linéaires de la légende */
       .legend-line {
-        width: 20px;
-        height: 0;
+        display: block;
+        width: 30px;
+        height: 10px;
         margin-right: 8px;
-        border-top: 2px solid #646464;
-        box-sizing: border-box;
         flex-shrink: 0;
       }
 
@@ -464,38 +463,53 @@
                 /* Couches linéaires */
                 else {
 
-                  symbol.className =
-                    'legend-line';
+                  symbol.className = 'legend-line';
 
-                  /* Couleur du trait */
-                  symbol.style.borderTopColor =
-                    color;
+                  /* Récupération des propriétés du trait */
+                  const paint = layer.paint || {};
 
-                  /* Épaisseur du trait */
+                  const color = paint['line-color'] || '#000000';
+
                   const lineWidth =
-                    layer.paint &&
-                    layer.paint['line-width'] !== undefined
-                      ? layer.paint['line-width']
+                    paint['line-width'] !== undefined
+                      ? paint['line-width']
                       : 2;
 
-                  symbol.style.borderTopWidth =
-                    lineWidth + 'px';
+                  const dashArray = paint['line-dasharray'];
 
-                  /* Style du trait */
-                  const dashArray =
-                    layer.paint &&
-                    layer.paint['line-dasharray'];
+                  /* Création du SVG */
+                  const svgNS = 'http://www.w3.org/2000/svg';
 
-                  if (dashArray) {
+                  const svg = document.createElementNS(svgNS, 'svg');
 
-                    symbol.style.borderTopStyle =
-                      'dashed';
+                  svg.setAttribute('width', '30');
+                  svg.setAttribute('height', '10');
+                  svg.setAttribute('viewBox', '0 0 30 10');
 
-                  } else {
+                  const line = document.createElementNS(svgNS, 'line');
 
-                    symbol.style.borderTopStyle =
-                      'solid';
+                  line.setAttribute('x1', '0');
+                  line.setAttribute('y1', '5');
+                  line.setAttribute('x2', '30');
+                  line.setAttribute('y2', '5');
+
+                  line.setAttribute('stroke', color);
+                  line.setAttribute('stroke-width', lineWidth);
+                  line.setAttribute('stroke-linecap', 'butt');
+
+                  /* Reproduction du motif de tirets */
+                  if (
+                    Array.isArray(dashArray) &&
+                    dashArray.length > 0
+                  ) {
+                    line.setAttribute(
+                      'stroke-dasharray',
+                      dashArray.join(' ')
+                    );
                   }
+
+                  svg.appendChild(line);
+                  symbol.appendChild(svg);
                 }
 
                 /* Texte */
