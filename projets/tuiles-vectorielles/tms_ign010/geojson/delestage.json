@@ -1,0 +1,162 @@
+{
+  "version": 8,
+  "name": "BDTOPO",
+  "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/BDTOPO/sprite/sprite_bdtopo",
+    "metadata": {"maputnik:renderer": "ol"},
+    "sources": {
+      "bdtopo": {
+        "type": "vector",
+        "tiles": [
+        "https://data.geopf.fr/tms/1.0.0/BDTOPO/{z}/{x}/{y}.pbf"
+        ],
+        "url":"https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
+      }
+  },
+    "transition": {
+        "duration": 300,
+        "delay": 0
+    },
+    "layers": [
+        {
+            "id": "importance_1",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#276e00",
+              "line-width": 4
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "1"]
+            ]
+          },
+          {
+            "id": "importance_2",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#84b756",
+              "line-width": 3
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "2"]
+            ]
+          },
+          {
+            "id": "importance_3",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#c7ff84",
+              "line-width": 2.5
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "3"]
+            ]
+          },
+          {
+            "id": "importance_4",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#ff7e45",
+              "line-width": 1.5
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "4"]
+            ]
+          },
+          {
+            "id": "importance_5",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#ed4a02",
+              "line-width": 1.5
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "5"]
+            ]
+          },
+          {
+            "id": "importance_6",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "paint": {
+              "line-color": "#B51D03",
+              "line-width": 1.5
+            },
+            "filter": [
+              "all",
+              ["==", "importance", "6"]
+            ]
+          },
+        {
+          "id": "region_limites",
+          "type": "line",
+          "source": "bdtopo",
+          "source-layer": "region",
+          "layout": {
+            "line-join": "round",
+            "line-cap": "round",
+            "visibility": "visible"
+          },
+          "paint": {
+            "line-color": "#b51d03",
+            "line-width": {"stops": [[2, 1], [5, 4]]},
+            "line-opacity": 0.8
+          }
+        },
+        {
+          "id": "departement_limites",
+          "type": "line",
+          "source": "bdtopo",
+          "source-layer": "departement",
+          "minzoom": 2,
+          "maxzoom": 12,
+          "layout": {
+            "line-join": "round",
+            "line-cap": "round",
+            "visibility": "visible"
+          },
+          "paint": {
+            "line-width": {"stops": [[2, 1], [10, 2]]},
+            "line-color": "#fc5130",
+            "line-opacity": 0.5
+          }
+        },
+        {
+          "id": "epci_limites",
+          "type": "line",
+          "source": "bdtopo",
+          "source-layer": "epci",
+          "minzoom": 10,
+          "maxzoom": 13,
+          "paint": {"line-width": 2, "line-color": "#14A7E1", "line-opacity": 0.8}
+        },
+        {
+          "id": "arrondissement_limites",
+          "type": "line",
+          "source": "bdtopo",
+          "source-layer": "arrondissement",
+          "minzoom": 11,
+          "layout": {"line-join": "bevel"},
+          "paint": {
+            "line-color": "#0a0a0b",
+            "line-dasharray": [18, 6],
+            "line-width": 0.75
+          }
+        }
+    ]
+}
