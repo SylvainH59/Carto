@@ -111,10 +111,11 @@
 
       /* Symboles linéaires de la légende */
       .legend-line {
-        display: block;
-        width: 30px;
-        height: 10px;
+        width: 20px;
+        height: 0;
         margin-right: 8px;
+        border-top: 2px solid #646464;
+        box-sizing: border-box;
         flex-shrink: 0;
       }
 
@@ -389,6 +390,7 @@
                   "chemin": "Chemin",
                   "escalier-outline": "Escalier outline",
                   "escalier-inline": "Escalier inline",
+                  "sentier-outline": "Sentier",
                   "sentier-inline": "Sentier"
                 };
                 
@@ -462,53 +464,38 @@
                 /* Couches linéaires */
                 else {
 
-                  symbol.className = 'legend-line';
+                  symbol.className =
+                    'legend-line';
 
-                  /* Récupération des propriétés du trait */
-                  const paint = layer.paint || {};
+                  /* Couleur du trait */
+                  symbol.style.borderTopColor =
+                    color;
 
-                  const color = paint['line-color'] || '#000000';
-
+                  /* Épaisseur du trait */
                   const lineWidth =
-                    paint['line-width'] !== undefined
-                      ? paint['line-width']
+                    layer.paint &&
+                    layer.paint['line-width'] !== undefined
+                      ? layer.paint['line-width']
                       : 2;
 
-                  const dashArray = paint['line-dasharray'];
+                  symbol.style.borderTopWidth =
+                    lineWidth + 'px';
 
-                  /* Création du SVG */
-                  const svgNS = 'http://www.w3.org/2000/svg';
+                  /* Style du trait */
+                  const dashArray =
+                    layer.paint &&
+                    layer.paint['line-dasharray'];
 
-                  const svg = document.createElementNS(svgNS, 'svg');
+                  if (dashArray) {
 
-                  svg.setAttribute('width', '30');
-                  svg.setAttribute('height', '10');
-                  svg.setAttribute('viewBox', '0 0 30 10');
+                    symbol.style.borderTopStyle =
+                      'dashed';
 
-                  const line = document.createElementNS(svgNS, 'line');
+                  } else {
 
-                  line.setAttribute('x1', '0');
-                  line.setAttribute('y1', '5');
-                  line.setAttribute('x2', '30');
-                  line.setAttribute('y2', '5');
-
-                  line.setAttribute('stroke', color);
-                  line.setAttribute('stroke-width', lineWidth);
-                  line.setAttribute('stroke-linecap', 'butt');
-
-                  /* Reproduction du motif de tirets */
-                  if (
-                    Array.isArray(dashArray) &&
-                    dashArray.length > 0
-                  ) {
-                    line.setAttribute(
-                      'stroke-dasharray',
-                      dashArray.join(' ')
-                    );
+                    symbol.style.borderTopStyle =
+                      'solid';
                   }
-
-                  svg.appendChild(line);
-                  symbol.appendChild(svg);
                 }
 
                 /* Texte */
