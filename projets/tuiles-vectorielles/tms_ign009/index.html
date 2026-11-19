@@ -388,8 +388,8 @@
                   "route-empierre": "Route empierrée",
                   "piste-cyclable": "Piste cyclable",
                   "chemin": "Chemin",
-                  "escalier-outline": "Escalier",
-                  "escalier-inline": "Escalier",
+                  "escalier-outline": "Escalier outline",
+                  "escalier-inline": "Escalier inline",
                   "sentier-outline": "Sentier",
                   "sentier-inline": "Sentier"
                 };
@@ -464,38 +464,81 @@
                 /* Couches linéaires */
                 else {
 
-                  symbol.className =
-                    'legend-line';
+                  symbol.className = 'legend-line';
 
-                  /* Couleur du trait */
-                  symbol.style.borderTopColor =
-                    color;
+                  const paint = layer.paint || {};
 
-                  /* Épaisseur du trait */
-                  const lineWidth =
-                    layer.paint &&
-                    layer.paint['line-width'] !== undefined
-                      ? layer.paint['line-width']
-                      : 2;
+                  const svgNS = 'http://www.w3.org/2000/svg';
 
-                  symbol.style.borderTopWidth =
-                    lineWidth + 'px';
+                  const svg = document.createElementNS(svgNS, 'svg');
 
-                  /* Style du trait */
-                  const dashArray =
-                    layer.paint &&
-                    layer.paint['line-dasharray'];
+                  svg.setAttribute('width', '30');
+                  svg.setAttribute('height', '10');
+                  svg.setAttribute('viewBox', '0 0 30 10');
 
-                  if (dashArray) {
+                  /* Cas particulier : escalier */
+                  if (layer.id === 'escalier-outline') {
 
-                    symbol.style.borderTopStyle =
-                      'dashed';
+                    /* Trait extérieur */
+                    const outline = document.createElementNS(svgNS, 'line');
 
-                  } else {
+                    outline.setAttribute('x1', '0');
+                    outline.setAttribute('y1', '5');
+                    outline.setAttribute('x2', '30');
+                    outline.setAttribute('y2', '5');
+                    outline.setAttribute('stroke', '#2d3427');
+                    outline.setAttribute('stroke-width', '2');
 
-                    symbol.style.borderTopStyle =
-                      'solid';
+                    svg.appendChild(outline);
+
+                    /* Trait intérieur */
+                    const inline = document.createElementNS(svgNS, 'line');
+
+                    inline.setAttribute('x1', '0');
+                    inline.setAttribute('y1', '5');
+                    inline.setAttribute('x2', '30');
+                    inline.setAttribute('y2', '5');
+                    inline.setAttribute('stroke', '#ffffff');
+                    inline.setAttribute('stroke-width', '1.8');
+                    inline.setAttribute('stroke-dasharray', '5.4 0.36');
+
+                    svg.appendChild(inline);
+
                   }
+
+                  /* Autres couches linéaires */
+                  else {
+
+                    const line = document.createElementNS(svgNS, 'line');
+
+                    line.setAttribute('x1', '0');
+                    line.setAttribute('y1', '5');
+                    line.setAttribute('x2', '30');
+                    line.setAttribute('y2', '5');
+
+                    line.setAttribute(
+                      'stroke',
+                      paint['line-color'] || '#000000'
+                    );
+
+                    const width = paint['line-width'] || 2;
+
+                    line.setAttribute('stroke-width', width);
+
+                    const dashArray = paint['line-dasharray'];
+
+                    if (Array.isArray(dashArray)) {
+
+                      line.setAttribute(
+                        'stroke-dasharray',
+                        dashArray.map(value => value * width).join(' ')
+                      );
+                    }
+
+                    svg.appendChild(line);
+                  }
+
+                  symbol.appendChild(svg);
                 }
 
                 /* Texte */
