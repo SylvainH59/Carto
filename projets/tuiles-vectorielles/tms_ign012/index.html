@@ -1,14 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8">
     <title>BDTOPO TMS - Eoliennes animées en 3D avec Three.js</title>
+
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.3.0/dist/maplibre-gl.css" />
     <script src="https://unpkg.com/maplibre-gl@5.3.0/dist/maplibre-gl.js"></script>
+
     <style>
       html, body, #map {
         margin: 0;
         height: 100%;
+      }
+
+      /* Sélecteur de fonds de plan */
+      #basemap-control {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        background: white;
+        padding: 5px;
+        border-radius: 4px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      #basemap-select {
+        padding: 7px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background: white;
+        font-size: 13px;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -25,13 +49,23 @@
 
     <div id="map"></div>
 
+    <!-- Sélecteur de fonds de plan -->
+    <div id="basemap-control">
+      <select id="basemap-select">
+        <option value="white">Fond blanc</option>
+        <option value="ortho">Orthophoto</option>
+        <option value="ign">Plan IGN v2</option>
+        <option value="osm">OpenStreetMap</option>
+      </select>
+    </div>
+
     <script type="module">
       import * as THREE from 'three';
       import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
       const map = new maplibregl.Map({
         container: 'map',
-        style: 'geojson/bdtopo_perso.json',
+        style: 'geojson/bdtopo_perso_10.json',
         center: [2.74223, 49.85253],
         zoom: 15,
         pitch: 60,
@@ -46,15 +80,149 @@
       const turbineLayers = new Map();   // pour suivre les couches ajoutées
       const loader = new GLTFLoader();
 
+      // --------------------------------------------------
+      // FONDS DE PLAN
+      // --------------------------------------------------
+
+      function addBasemaps() {
+
+        // Fond blanc
+        map.addLayer({
+          id: 'white-background',
+          type: 'background',
+          paint: {
+            'background-color': '#ffffff'
+          },
+          layout: {
+            visibility: 'visible'
+          }
+        }, map.getStyle().layers[0].id);
+
+        // OpenStreetMap
+        map.addSource('osm', {
+          type: 'raster',
+          tiles: [
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+          ],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors'
+        });
+
+        // Plan IGN v2
+        map.addSource('ign-plan', {
+          type: 'raster',
+          tiles: [
+            'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}'
+          ],
+          tileSize: 256,
+          attribution: '© IGN - Géoplateforme'
+        });
+
+        // Orthophoto IGN
+        map.addSource('ign-ortho', {
+          type: 'raster',
+          tiles: [
+            'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}'
+          ],
+          tileSize: 256,
+          attribution: '© IGN - Géoplateforme'
+        });
+
+        // Repérer la première couche de données BDTOPO
+        const firstLayer = map.getStyle().layers.find(
+          layer => layer.type !== 'background'
+        );
+
+        const beforeId = firstLayer ? firstLayer.id : undefined;
+
+        // Ajouter OpenStreetMap sous la BDTOPO
+        map.addLayer({
+          id: 'osm-layer',
+          type: 'raster',
+          source: 'osm',
+          layout: {
+            visibility: 'none'
+          }
+        }, beforeId);
+
+        // Ajouter Plan IGN sous la BDTOPO
+        map.addLayer({
+          id: 'ign-plan-layer',
+          type: 'raster',
+          source: 'ign-plan',
+          layout: {
+            visibility: 'none'
+          }
+        }, beforeId);
+
+        // Ajouter Orthophoto sous la BDTOPO
+        map.addLayer({
+          id: 'ign-ortho-layer',
+          type: 'raster',
+          source: 'ign-ortho',
+          layout: {
+            visibility: 'none'
+          }
+        }, beforeId);
+
+        // Gestion du sélecteur
+        const basemapSelect = document.getElementById('basemap-select');
+
+        const basemapLayers = {
+          ortho: 'ign-ortho-layer',
+          ign: 'ign-plan-layer',
+          osm: 'osm-layer'
+        };
+
+        basemapSelect.addEventListener('change', function () {
+          const selected = this.value;
+
+          // Masquer tous les fonds raster
+          Object.values(basemapLayers).forEach(layerId => {
+            map.setLayoutProperty(
+              layerId,
+              'visibility',
+              'none'
+            );
+          });
+
+          // Afficher le fond sélectionné
+          if (basemapLayers[selected]) {
+            map.setLayoutProperty(
+              basemapLayers[selected],
+              'visibility',
+              'visible'
+            );
+          }
+
+          // Afficher ou masquer le fond blanc
+          map.setLayoutProperty(
+            'white-background',
+            'visibility',
+            selected === 'white' ? 'visible' : 'none'
+          );
+        });
+      }
+
+      // --------------------------------------------------
+      // EOLIENNES ANIMEES EN 3D
+      // --------------------------------------------------
+
       function updateWindTurbines() {
         if (map.getZoom() < 15) {
+
           // Nettoyer toutes les éoliennes si on descend sous le seuil
           for (const id of loadedEoliennes) {
             const layerId = turbineLayers.get(id);
-            if (map.getLayer(layerId)) map.removeLayer(layerId);
+
+            if (map.getLayer(layerId)) {
+              map.removeLayer(layerId);
+            }
+
             turbineLayers.delete(id);
             loadedEoliennes.delete(id);
           }
+
           return;
         }
 
@@ -68,6 +236,7 @@
         for (const feature of features) {
           const coord = feature.geometry.coordinates;
           const id = `${coord[0].toFixed(5)}-${coord[1].toFixed(5)}`;
+
           visibleIds.add(id);
 
           if (loadedEoliennes.has(id)) continue;
@@ -75,6 +244,7 @@
           loadedEoliennes.add(id);
 
           const merc = maplibregl.MercatorCoordinate.fromLngLat(coord, 0);
+
           const transform = {
             translateX: merc.x,
             translateY: merc.y,
@@ -109,11 +279,13 @@
               onAdd: function (map, gl) {
                 this.camera = camera;
                 this.scene = scene;
+
                 this.renderer = new THREE.WebGLRenderer({
                   canvas: map.getCanvas(),
                   context: gl,
                   antialias: true
                 });
+
                 this.renderer.autoClear = false;
               },
 
@@ -128,10 +300,12 @@
                   new THREE.Vector3(1, 0, 0),
                   transform.rotateX
                 );
+
                 const rotationY = new THREE.Matrix4().makeRotationAxis(
                   new THREE.Vector3(0, 1, 0),
                   transform.rotateY
                 );
+
                 const rotationZ = new THREE.Matrix4().makeRotationAxis(
                   new THREE.Vector3(0, 0, 1),
                   transform.rotateZ
@@ -159,8 +333,10 @@
                   .multiply(rotationZ);
 
                 this.camera.projectionMatrix = m.multiply(l);
+
                 this.renderer.resetState();
                 this.renderer.render(this.scene, this.camera);
+
                 map.triggerRepaint();
               }
             };
@@ -174,18 +350,33 @@
         for (const id of loadedEoliennes) {
           if (!visibleIds.has(id)) {
             const layerId = turbineLayers.get(id);
-            if (map.getLayer(layerId)) map.removeLayer(layerId);
+
+            if (map.getLayer(layerId)) {
+              map.removeLayer(layerId);
+            }
+
             turbineLayers.delete(id);
             loadedEoliennes.delete(id);
           }
         }
       }
 
+      // --------------------------------------------------
+      // INITIALISATION DE LA CARTE
+      // --------------------------------------------------
+
       map.on('load', () => {
+
+        // Ajouter les fonds de plan
+        addBasemaps();
+
+        // Initialiser les éoliennes
         updateWindTurbines();
+
         map.on('moveend', updateWindTurbines);
         map.on('zoomend', updateWindTurbines);
       });
+
     </script>
   </body>
 </html>
