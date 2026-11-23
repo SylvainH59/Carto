@@ -186,157 +186,16 @@
         "minzoom": 7,
         "layout": {"visibility": "visible"}
       },
-          {
-            "id": "limite_terre_mer",
-            "type": "line",
-            "source": "bdtopo",
-            "source-layer": "limite_terre_mer",
-            "paint": {
-              "line-color": "#5e8eba",
-              "line-width": 0.75
-            },
-            "layout": {"visibility": "none"}
-          }
-          ,
-    {
-      "id": "region_limites",
-      "type": "line",
-      "paint": {
-        "line-color": "rgba(0, 0, 0, 1)",
-        "line-width": 2
-      },
-      "source": "bdtopo",
-      "source-layer": "region",
-      "layout": {"line-join": "bevel"}
-    },
-    {
-      "id": "departement_limites",
-      "type": "line",
-      "source": "bdtopo",
-      "source-layer": "departement",
-      "minzoom": 2,
-      "maxzoom": 12,
-      "paint": {
-        "line-width": 0.75,
-        "line-color": "#000000"
+      {
+        "id": "limite_terre_mer",
+        "type": "line",
+        "source": "bdtopo",
+        "source-layer": "limite_terre_mer",
+        "paint": {
+          "line-color": "#5e8eba",
+          "line-width": 0.75
+          },
+        "layout": {"visibility": "none"}
       }
-    },
-    {
-      "id": "epci_limites",
-      "type": "line",
-      "source": "bdtopo",
-      "source-layer": "epci",
-      "paint": {
-        "line-width": 1.8,
-        "line-color": "#1f78b4"
-      },
-      "minzoom": 8,
-      "maxzoom": 15
-    },
-    {
-      "id": "arrondissement_limites",
-      "type": "line",
-      "source": "bdtopo",
-      "source-layer": "arrondissement",
-      "paint": {
-        "line-color": "#666666",
-        "line-dasharray": [18, 6],
-        "line-width": 0.75
-      },
-      "minzoom": 11,
-      "layout": {"line-join": "bevel"}
-    },
-    {
-      "id": "commune_limites",
-      "type": "line",
-      "source": "bdtopo",
-      "source-layer": "commune",
-      "paint": {
-        "line-color": "#999999",
-        "line-dasharray": [2, 4, 6, 4],
-        "line-width": 0.75
-      },
-      "minzoom": 11,
-      "layout": {"line-join": "bevel"}
-    },{
-      "id": "region_labels",
-      "type": "symbol",
-      "source": "bdtopo",
-      "source-layer": "region",
-      "layout": {
-        "text-field": "{nom_officiel}",
-        "text-size": 20,
-        "text-font": ["Open Sans Regular"]
-      },
-      "minzoom": 1,
-      "maxzoom": 7
-    },
-    {
-      "id": "departement_labels",
-      "type": "symbol",
-      "source": "bdtopo",
-      "source-layer": "departement",
-      "layout": {
-        "text-field": "{nom_officiel}",
-        "text-font": ["Open Sans Regular"],
-        "text-size": 20
-      },
-      "maxzoom": 10,
-      "minzoom": 7
-    },
-    {
-      "id": "epci_labels",
-      "type": "symbol",
-      "source": "bdtopo",
-      "source-layer": "epci",
-      "layout": {
-        "text-field": "{nom_officiel}",
-        "text-font": ["Open Sans Bold Italic"],
-        "text-size": 16,
-        "text-allow-overlap": false,
-        "text-ignore-placement": false,
-        "icon-text-fit": "none"
-      },
-      "paint": {
-        "text-color": "#1f78b4",
-        "text-halo-color": "rgba(255, 255, 255, 1)",
-        "text-halo-width": 5
-      },
-      "minzoom": 8,
-      "maxzoom": 15
-    },
-    {
-      "id": "arrondissement_labels",
-      "type": "symbol",
-      "source": "bdtopo",
-      "source-layer": "arrondissement",
-      "minzoom": 13,
-      "layout": {
-        "text-field": "{nom_officiel}",
-        "text-font": ["Open Sans Italic"]
-      },
-      "paint": {
-        "text-color": "rgba(0, 0, 0, 1)",
-        "text-halo-width": 1,
-        "text-halo-color": "rgba(255, 255, 255, 1)"
-      }
-    },
-    {
-      "id": "commune_labels",
-      "type": "symbol",
-      "source": "bdtopo",
-      "source-layer": "commune",
-      "minzoom": 12,
-      "layout": {
-        "text-field": "{nom_officiel}",
-        "text-font": ["Open Sans Regular"]
-      },
-      "paint": {
-        "text-color": "rgba(0, 0, 0, 1)",
-        "text-halo-width": 5,
-        "text-halo-color": "rgba(255, 255, 255, 1)"
-      }
-    }
-
     ]
 }
